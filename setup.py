@@ -15,6 +15,8 @@ import subprocess
 import sys
 import re
 import errno
+import torch
+import intel_extension_for_pytorch
 from intel_extension_for_pytorch.xpu.cpp_extension import DPCPPExtension, DpcppBuildExtension
 
 
@@ -38,8 +40,7 @@ class CMakeBuild():
         self.build_extension()
 
     def build_extension(self):
-        # ninja_dir = shutil.which('ninja')
-        ninja_dir = "/home/chengjun/clion-2023.1.3/bin/ninja/linux/x64/ninja"
+        ninja_dir = shutil.which('ninja')
         # create build directories
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
@@ -49,6 +50,7 @@ class CMakeBuild():
             "-G", "Ninja",  # Ninja is much faster than make
             "-DCMAKE_MAKE_PROGRAM=" +
             ninja_dir,  # Pass explicit path to ninja otherwise cmake may cache a temporary path
+            f"-DCMAKE_PREFIX_PATH={torch.utils.cmake_prefix_path};{intel_extension_for_pytorch.cmake_prefix_path}",
             "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
             "-DCMAKE_ARCHIVE_OUTPUT_DIRECTORY=" + self.extdir,
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY=" + self.extdir,
@@ -68,7 +70,7 @@ class CMakeBuild():
 
         env = os.environ.copy()
         cmake_dir = self.build_temp
-        # subprocess.check_call(["cmake", self.current_dir] + cmake_args, cwd=cmake_dir, env=env)
+        subprocess.check_call(["cmake", self.current_dir] + cmake_args, cwd=cmake_dir, env=env)
         print(["cmake", self.current_dir] + cmake_args)
         print(cmake_dir)
         print(["cmake", "--build", "."] + build_args)
