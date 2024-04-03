@@ -15,17 +15,18 @@ sycl::queue get_current_sycl_queue() {
 #define CHECK_CONTIGUOUS(x) TORCH_CHECK(x.is_contiguous(), #x " must be contiguous")
 #define CHECK_INPUT(x) CHECK_XPU(x); CHECK_CONTIGUOUS(x)
 
-at::Tensor softmax(const at::Tensor& input, const int64_t dim) {
+at::Tensor softmax_shape0(const at::Tensor& input, const int64_t dim) {
   CHECK_INPUT(input);
 
   const int64_t wrapped_dim = at::maybe_wrap_dim(dim, input.dim());
   auto output = at::empty_like(input);
 
   auto queue = get_current_sycl_queue();
-  softmax_forward<mat0_96x2048x2048_bf16>(input.data_ptr(), output.data_ptr(), queue);
+  softmax_forward<mat1_4096x2048_bf16_cfg0>(input.data_ptr(), output.data_ptr(), queue);
   return output;
 }
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
-m.def("softmax", &softmax, "softmax forward (XeTLA)");
+m.def("softmax_shape0", &softmax_shape0, "softmax forward (XeTLA)");
+//m.def("softmax", &softmax_shape0, "softmax forward (XeTLA)");
 }
