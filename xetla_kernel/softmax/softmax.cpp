@@ -89,3 +89,9 @@ void softmax_forward(void* input, void* output, sycl::queue& queue) {
 
 template void softmax_forward<mat0_96x2048x2048_bf16>(void* input, void* output, sycl::queue& queue);
 template void softmax_forward<mat1_96x2048x2048_bf16>(void* input, void* output, sycl::queue& queue);
+template void softmax_forward<mat1_256x256_bf16_cfg0>(void* input, void* output, sycl::queue& queue);
+template void softmax_forward<mat1_1024x1024_bf16_cfg0>(void* input, void* output, sycl::queue& queue);
+template void softmax_forward<mat1_2048x2048_bf16_cfg0>(void* input, void* output, sycl::queue& queue);
+//template void softmax_forward<mat1_3072x3072_bf16_cfg0>(void* input, void* output, sycl::queue& queue);
+template void softmax_forward<mat1_4096x4096_bf16_cfg0>(void* input, void* output, sycl::queue& queue);
+//template void softmax_forward<mat1_8192x8192_bf16_cfg0>(void* input, void* output, sycl::queue& queue);
